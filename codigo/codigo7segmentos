@@ -1,0 +1,196 @@
+/*
+*/
+
+#define A 2
+#define B 3
+#define C 4
+#define D 5
+#define E 6
+#define F 7
+#define G 8
+#define BOTON_RESET A5
+#define BOTON_SUMAR A4
+#define BOTON_RESTAR A3
+#define UNIDAD A1
+#define DECENA A2
+
+
+int contador = 0;
+int estadoReset;
+int estadoSumar;
+int estadoRestar;
+
+int sumarPrevio;
+int restarPrevio;
+int resetPrevio;
+
+
+
+void setup()
+{
+  for (int i = 2; i < 9; i++)
+  {
+  	pinMode(i, OUTPUT);
+  }
+  
+  pinMode(BOTON_RESET, INPUT_PULLUP);
+  pinMode(BOTON_SUMAR, INPUT_PULLUP);
+  pinMode(BOTON_RESTAR, INPUT_PULLUP);
+  pinMode(UNIDAD, OUTPUT);
+  pinMode(DECENA, OUTPUT);
+  
+  
+}
+
+void loop()
+{
+ 
+  int botonPresionado = leerPresionado();
+  
+  if(botonPresionado == BOTON_SUMAR)
+  {
+    contador++;
+    if (contador > 99)
+    {
+      contador = 0;
+    }
+  }
+  else if(botonPresionado == BOTON_RESTAR)
+  {
+    contador--;
+    if (contador < 0)
+    {
+      contador = 99;
+    }
+  }
+  else if(botonPresionado == BOTON_RESET)
+  {
+    contador = 0;
+  }
+  
+  
+  secuenciaDisplays();
+  
+}
+
+
+void secuenciaDisplays()
+{
+  dibujarNumero(contador - 10 * int(contador/10)); // Escribe la unidad en los dos display
+  prenderApagarDisplay(UNIDAD); // Apaga la decena, prende las unidades
+  prenderApagarDisplay(0); // Borra el numero
+  
+  dibujarNumero(contador/10); // Calcula la decena
+  prenderApagarDisplay(DECENA); // Apaga la unidad, prende solo la decena
+  prenderApagarDisplay(0); // Borra el numero
+}
+
+
+
+int leerPresionado()
+{
+  estadoSumar = digitalRead(BOTON_SUMAR);
+  estadoRestar = digitalRead(BOTON_RESTAR);
+  estadoReset = digitalRead(BOTON_RESET);
+  
+  if (estadoSumar)
+  {
+    sumarPrevio = 1;
+  }
+  if (estadoRestar)
+  {
+    restarPrevio = 1;
+  }
+  if (estadoReset)
+  {
+    resetPrevio = 1;
+  }
+  
+  if (estadoSumar == 0 && estadoSumar != sumarPrevio)
+  {
+    sumarPrevio = estadoSumar;
+    return BOTON_SUMAR;
+  }
+  if (estadoRestar == 0 && estadoRestar != restarPrevio)
+  {
+    restarPrevio = estadoRestar;
+    return BOTON_RESTAR;
+  }
+  if (estadoReset == 0 && estadoReset != resetPrevio)
+  {
+    resetPrevio = estadoReset;
+    return BOTON_RESET;
+  }
+  
+  return 0;
+}
+
+void prenderApagarDisplay(int digito)
+{
+  if (digito == UNIDAD)
+  {
+    digitalWrite(UNIDAD, LOW); // Prende la unidad
+    digitalWrite(DECENA, HIGH); // Apaga la decena
+    delay(10);
+  }
+  else if (digito == DECENA)
+  {
+    digitalWrite(UNIDAD, HIGH); // Apaga la unidad
+    digitalWrite(DECENA, LOW); // Prende la decena
+    delay(10);
+  }
+  else
+  {
+    digitalWrite(UNIDAD, HIGH); // Apaga los dos
+    digitalWrite(DECENA, HIGH);
+  }
+}
+
+void dibujarNumero(int contador)
+{
+  switch(contador)
+  {
+
+  	case 0:
+    	dibujarEnDisplay(1,1,1,1,1,1,0);
+    	break;
+	case 1:
+        dibujarEnDisplay(0,1,1,0,0,0,0);
+        break;
+	case 2:
+    	dibujarEnDisplay(1,1,0,1,1,0,1);
+        break;
+	case 3:
+    	dibujarEnDisplay(1,1,1,1,0,0,1);
+        break;
+	case 4:
+    	dibujarEnDisplay(0,1,1,0,0,1,1);
+   	 	break;
+    case 5:
+    	dibujarEnDisplay(1,0,1,1,0,1,1);
+    	break;
+	case 6:
+    	dibujarEnDisplay(1,0,1,1,1,1,1);
+    	break;
+	case 7:
+    	dibujarEnDisplay(1,1,1,0,0,0,0);
+    	break;
+    case 8:
+  		dibujarEnDisplay(1,1,1,1,1,1,1);
+    	break;
+    case 9:
+    	dibujarEnDisplay(1,1,1,1,0,1,1);
+    	break;
+  	}
+ 
+ }
+void dibujarEnDisplay(int a,int b,int c,int d,int e,int f,int g)
+{
+  digitalWrite(A, a);
+  digitalWrite(B, b);
+  digitalWrite(C, c);
+  digitalWrite(D, d);
+  digitalWrite(E, e);
+  digitalWrite(F, f);
+  digitalWrite(G, g);
+}
