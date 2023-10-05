@@ -150,19 +150,18 @@ void dibujarNumero(int contador)
 {
   switch(contador)
   {
-
-  	case 0:
-    	dibujarEnDisplay(1,1,1,1,1,1,0);
+  case 0:
+      dibujarEnDisplay(1,1,1,1,1,1,0);
     	break;
 	case 1:
-        dibujarEnDisplay(0,1,1,0,0,0,0);
-        break;
+      dibujarEnDisplay(0,1,1,0,0,0,0);
+      break;
 	case 2:
     	dibujarEnDisplay(1,1,0,1,1,0,1);
-        break;
+      break;
 	case 3:
     	dibujarEnDisplay(1,1,1,1,0,0,1);
-        break;
+      break;
 	case 4:
     	dibujarEnDisplay(0,1,1,0,0,1,1);
    	 	break;
