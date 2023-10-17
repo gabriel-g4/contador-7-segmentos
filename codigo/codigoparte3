@@ -1,0 +1,315 @@
+#define A 2
+#define B 3
+#define C 4
+#define D 5
+#define E 6
+#define F 7
+#define G 8
+#define BOTON_RESET 10
+#define BOTON_SUMAR A4
+#define BOTON_RESTAR A3
+#define UNIDAD A1
+#define DECENA A2
+#define INTERRUPTOR 9
+#define MOTOR_POS 11
+#define MOTOR_NEG 12
+#define SENSOR A0
+#define FOTORESISTENCIA A5
+
+int contador = 0;
+int estadoReset;
+int estadoSumar;
+int estadoRestar;
+
+int sumarPrevio;
+int restarPrevio;
+int resetPrevio;
+
+int estadoInterruptor;
+int estadoSensor;
+
+
+
+void setup()
+{
+  for (int i = 2; i < 9; i++)
+  {
+  	pinMode(i, OUTPUT);
+  }
+  
+  pinMode(BOTON_RESET, INPUT_PULLUP);
+  pinMode(BOTON_SUMAR, INPUT_PULLUP);
+  pinMode(BOTON_RESTAR, INPUT_PULLUP);
+  pinMode(UNIDAD, OUTPUT);
+  pinMode(DECENA, OUTPUT);
+  pinMode(INTERRUPTOR, INPUT);
+  pinMode(MOTOR_POS, OUTPUT);
+  pinMode(MOTOR_NEG, OUTPUT);
+  pinMode(SENSOR, INPUT);
+  pinMode(FOTORESISTENCIA, INPUT);
+  Serial.begin(9600);
+  
+  
+}
+
+
+/* Lee si algun boton fue presionado, y ejecuta 
+su accion correspondiente. Prende o apaga el motor y 
+muestra el contador en los displays. */
+
+void loop()
+{
+ 
+  int botonPresionado = leerPresionado();
+  
+  if(botonPresionado == BOTON_SUMAR)
+  {
+    contador++;
+    if (contador > 99)
+    {
+      contador = 0;
+    }
+  }
+  else if(botonPresionado == BOTON_RESTAR)
+  {
+    contador--;
+    if (contador < 0)
+    {
+      contador = 99;
+    }
+  }
+  else if(botonPresionado == BOTON_RESET)
+  {
+    contador = 0;
+  }
+  
+  
+  prenderApagarMotor();
+  
+  
+  mostrarDependiendoSwitch();
+  
+}
+
+
+/*Lee el estado del sensor de fuerza y el estado de la 
+fotorresistencia. Mapea el valor de fuerza para que tenga 
+el mismo rango que el contador y mapea el valor de la 
+fotorresistencia de 100 a 0. Los muestra en el monitor 
+en serie. Si el resultado de la fuerza es mayor o igual que 
+el numero que está en el display se prende el motor, y, si el 
+mapeado de la fotorresistencia es menor a 35% el motor 
+funcionará en sentido contrario. Caso contrario se apaga. */
+
+
+void prenderApagarMotor()
+{
+  estadoSensor = analogRead(SENSOR);
+  int numeroMapeadoSensor = map(estadoSensor, 0 , 159, 0 , 99);
+  
+  int valorFotoresistencia = analogRead(FOTORESISTENCIA);
+  valorFotoresistencia = map(valorFotoresistencia, 713 , 1022, 0 , 100);
+  
+  Serial.print("Valor fotoresistencia: ");
+  Serial.println(valorFotoresistencia);
+  Serial.print("Valor sensor de fuerza: ");
+  Serial.println(numeroMapeadoSensor);
+  Serial.println();
+  
+  
+  if (numeroMapeadoSensor >= contador)
+  {
+    digitalWrite(MOTOR_POS, HIGH);
+    digitalWrite(MOTOR_NEG, LOW);
+    
+    if (valorFotoresistencia < 35)
+    {
+      digitalWrite(MOTOR_POS, LOW);
+      digitalWrite(MOTOR_NEG, HIGH);
+    }
+  }
+  else
+  {
+    digitalWrite(MOTOR_POS, LOW);
+    digitalWrite(MOTOR_NEG, LOW);
+  }
+}
+
+
+/*Lee el interruptor, si esta encendido muestra los numeros
+normalmente. Si esta en modo numeros primos calcula si el numero
+del contador es primo, si es así lo muestra.*/
+
+
+
+void mostrarDependiendoSwitch()
+{
+  estadoInterruptor = digitalRead(INTERRUPTOR);
+  
+  if (estadoInterruptor)
+  {
+    secuenciaDisplays();
+  }
+  else
+  {
+    int divisores = 0;
+    
+    for (int i = 1; i <= contador; i++)
+    {
+      if (contador % i == 0)
+      {
+		divisores++;
+      }
+    }
+    
+    if (divisores == 2)
+    {
+      secuenciaDisplays();
+    }
+  }
+}
+
+
+/*dibujarNumero esta mostrando en los dos display la unidad,
+en la linea siguiente se apaga el display que representa la 
+decena y luego se apagan ambos. Esto mismo sucede con 
+la decena. Todo esto ocurre con un delay de 10 milisegundos, 
+y por eso da la ilusión al ojo humano que son dos contadores 
+con valores distintos, cuando en realidad tienen 1 y se van 
+alternando y apagando.*/
+
+
+
+void secuenciaDisplays()
+{
+  dibujarNumero(contador - 10 * int(contador/10)); // Escribe la unidad en los dos display
+  prenderApagarDisplay(UNIDAD); // Apaga la decena, prende las unidades
+  prenderApagarDisplay(0); // Borra el numero
+  
+  dibujarNumero(contador/10); // Calcula la decena
+  prenderApagarDisplay(DECENA); // Apaga la unidad, prende solo la decena
+  prenderApagarDisplay(0); // Borra el numero
+}
+
+
+/* Lee el estado de los botones. Si no estan presionados,
+lo guarda, y si lo están, devuelve el boton presionado
+solo si esa variable anterior estaba sin presionar. Esto sirve
+para que se ejecute la acción deseada una vez por presión.
+En caso de que no se presione ningun boton o se mantenga presionado uno
+devuelve 0. */
+
+
+int leerPresionado()
+{
+  estadoSumar = digitalRead(BOTON_SUMAR);
+  estadoRestar = digitalRead(BOTON_RESTAR);
+  estadoReset = digitalRead(BOTON_RESET);
+  
+  if (estadoSumar)
+  {
+    sumarPrevio = 1;
+  }
+  if (estadoRestar)
+  {
+    restarPrevio = 1;
+  }
+  if (estadoReset)
+  {
+    resetPrevio = 1;
+  }
+  
+  if (estadoSumar == 0 && estadoSumar != sumarPrevio)
+  {
+    sumarPrevio = estadoSumar;
+    return BOTON_SUMAR;
+  }
+  if (estadoRestar == 0 && estadoRestar != restarPrevio)
+  {
+    restarPrevio = estadoRestar;
+    return BOTON_RESTAR;
+  }
+  if (estadoReset == 0 && estadoReset != resetPrevio)
+  {
+    resetPrevio = estadoReset;
+    return BOTON_RESET;
+  }
+  
+  return 0;
+}
+
+
+/* Prende el display que recibe por parametro. */
+
+
+void prenderApagarDisplay(int digito)
+{
+  if (digito == UNIDAD)
+  {
+    digitalWrite(UNIDAD, LOW); // Prende la unidad
+    digitalWrite(DECENA, HIGH); // Apaga la decena
+    delay(10);
+  }
+  else if (digito == DECENA)
+  {
+    digitalWrite(UNIDAD, HIGH); // Apaga la unidad
+    digitalWrite(DECENA, LOW); // Prende la decena
+    delay(10);
+  }
+  else
+  {
+    digitalWrite(UNIDAD, HIGH); // Apaga los dos
+    digitalWrite(DECENA, HIGH);
+  }
+}
+
+
+void dibujarNumero(int contador)
+{
+  switch(contador)
+  {
+  	case 0:
+    	dibujarEnDisplay(1,1,1,1,1,1,0);
+    	break;
+	case 1:
+        dibujarEnDisplay(0,1,1,0,0,0,0);
+        break;
+	case 2:
+    	dibujarEnDisplay(1,1,0,1,1,0,1);
+        break;
+	case 3:
+    	dibujarEnDisplay(1,1,1,1,0,0,1);
+        break;
+	case 4:
+    	dibujarEnDisplay(0,1,1,0,0,1,1);
+   	 	break;
+    case 5:
+    	dibujarEnDisplay(1,0,1,1,0,1,1);
+    	break;
+	case 6:
+    	dibujarEnDisplay(1,0,1,1,1,1,1);
+    	break;
+	case 7:
+    	dibujarEnDisplay(1,1,1,0,0,0,0);
+    	break;
+    case 8:
+  		dibujarEnDisplay(1,1,1,1,1,1,1);
+    	break;
+    case 9:
+    	dibujarEnDisplay(1,1,1,1,0,1,1);
+    	break;
+  }
+ 
+}
+
+
+void dibujarEnDisplay(int a,int b,int c,int d,int e,int f,int g)
+{
+  digitalWrite(A, a);
+  digitalWrite(B, b);
+  digitalWrite(C, c);
+  digitalWrite(D, d);
+  digitalWrite(E, e);
+  digitalWrite(F, f);
+  digitalWrite(G, g);
+}
