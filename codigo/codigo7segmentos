@@ -39,13 +39,12 @@ void setup()
   
 }
 
+/* Lee si algun boton fue presionado, y ejecuta 
+su accion correspondiente. Muestra el contador en los displays
+indefinidamente. */
+
 void loop()
 {
-  
- /* Lee si algun boton fue presionado, y ejecuta 
- su accion correspondiente. Muestra el contador en los displays
- indefinidamente. */
-  
   int botonPresionado = leerPresionado();
   
   if(botonPresionado == BOTON_SUMAR)
@@ -74,16 +73,16 @@ void loop()
   
 }
 
+/*dibujarNumero esta mostrando en los dos display la unidad,
+en la linea siguiente se apaga el display que representa la 
+decena y luego se apagan ambos. Esto mismo sucede con 
+la decena. Todo esto ocurre con un delay de 10 milisegundos, 
+y por eso da la ilusión al ojo humano que son dos contadores 
+con valores distintos, cuando en realidad tienen 1 y se van 
+alternando y apagando.*/
 
 void secuenciaDisplays()
 {
-  /*dibujarNumero esta mostrando en los dos display la unidad,
-  en la linea siguiente se apaga el display que representa la 
-  decena y luego se apagan ambos. Esto mismo sucede con 
-  la decena. Todo esto ocurre con un delay de 10 milisegundos, 
-  y por eso da la ilusión al ojo humano que son dos contadores 
-  con valores distintos, cuando en realidad tienen 1 y se van 
-  alternando y apagando.*/
   
   dibujarNumero(contador - 10 * int(contador/10)); // Escribe la unidad en los dos display
   prenderApagarDisplay(UNIDAD); // Apaga la decena, prende las unidades
@@ -95,16 +94,16 @@ void secuenciaDisplays()
 }
 
 
+/* Lee el estado de los botones. Si no estan presionados,
+lo guarda, y si lo están, devuelve el boton presionado
+solo si esa variable anterior estaba sin presionar. Esto sirve
+para que se ejecute la acción deseada una vez por presión.
+En caso de que no se presione ningun boton o se mantenga presionado uno
+devuelve 0. */
+
 
 int leerPresionado()
 {
-  /* Lee el estado de los botones. Si no estan presionados,
-  lo guarda, y si lo están, devuelve el boton presionado
-  solo si esa variable anterior estaba sin presionar. Esto sirve
-  para que se ejecute la acción deseada una vez por presión.
-  En caso de que no se presione ningun boton o se mantenga presionado uno
-  devuelve 0. */
-  
   estadoSumar = digitalRead(BOTON_SUMAR);
   estadoRestar = digitalRead(BOTON_RESTAR);
   estadoReset = digitalRead(BOTON_RESET);
@@ -141,10 +140,10 @@ int leerPresionado()
   return 0;
 }
 
+/* Prende el display que recibe por parametro. */
+
 void prenderApagarDisplay(int digito)
 {
-  /* Prende el display que recibe por parametro. */
-  
   if (digito == UNIDAD)
   {
     digitalWrite(UNIDAD, LOW); // Prende la unidad
