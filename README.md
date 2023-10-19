@@ -1,15 +1,18 @@
-# Parcial domiciliario
+# Parcial domiciliario 💻
 ![Tinkercad](circuito/Logo-tinkercad-wordmark.png)
 
 
 ## Integrantes 
-- Matias Flores
-- Lorenzo Buero
-- Sol Ghiglieri
-- Gabriel Garcia
+- :penguin: Matias Flores
+- :dog: Lorenzo Buero
+- :sun_with_face: Sol Ghiglieri
+- :monkey_face: Gabriel Garcia
 
 ## Parte 1
 ![Parte1](circuito/circuitoparte1.png)
+
+## :robot: Link al proyecto
+- [Parte 1](https://www.tinkercad.com/things/8P37P67VTbR)
 
 ## Descripción
 Es un contador de 2 dígitos hecho con dos displays de 7 segmentos que funcionan a través de multiplexación, que cuenta con los botones sumar, restar y resetear. 
@@ -37,6 +40,9 @@ void secuenciaDisplays()
 
 ## Parte 2
 ![Parte2](circuito/circuitoparte2.png)
+
+## :robot: Link al proyecto
+- [Parte 2](https://www.tinkercad.com/things/jXCdSiE0deq)
 
 ## Descripción
 En esta parte se agrega un switch para solo mostrar numeros primos, o mostrar como la versión anterior. También se agrega un sensor de fuerza y un motor. Si la fuerza aplicada al sensor es mayor o igual al contador de los displays, el motor se va a encender.
@@ -101,6 +107,9 @@ void prenderApagarMotor()
 ## Parte 3
 ![Parte3](circuito/circuitoparte3.png)
 
+## :robot: Link al proyecto
+- [Parte 3](https://www.tinkercad.com/things/5OJvtoHzFkk)
+
 ## Descripción
 A la versión anterior se le agrega una fotorresistencia que añade la funcionalidad de girar el motor hacia adelante o hacia atrás dependiendo de su estado.
 
@@ -149,8 +158,17 @@ void prenderApagarMotor()
   }
 }
 ~~~
+### MOTOR DE AFICIONADO
 
-## :robot: Link a los proyectos
-- [Parte 1](https://www.tinkercad.com/things/8P37P67VTbR)
-- [Parte 2](https://www.tinkercad.com/things/jXCdSiE0deq)
-- [Parte 3](https://www.tinkercad.com/things/5OJvtoHzFkk)
+#### Definición
+> El motor de aficionado es un dispositivo que gira un eje a una posición especificada en el código, se suelen usar en robotica y modelismo. Estos motores suelen tener un rango de 180°de movimiento. En nuestro proyecto agregamos un motor de afucionado que gira si la fuerza aplicada a un sensor de fuerza es mayor al número en los displays, y deja de girar si la fuerza es menor.
+
+### SENSOR DE FUERZA
+
+#### Definición
+> El sensor de fuerza funciona detectando una deformacion en la resistencia de la galga extensible que tiene el sensor. El cual cambia su propiedad electrica al aplicarles fuerza, al ser el cambio proporcional a la fuerza aplicada el sensor nos devuelve un valor númerico expresado en newton o libras dependiendo de la calibración del sensor.
+
+### FOTORRESISTOR
+#### Definición
+
+> La fotorresistencia o fotorresistor es un componente electrónico cuya resistencia se modifica, (normalmente disminuye) con el aumento de intensidad de luz incidente. En el proyecto está implementado para darle una funcionalidad nueva al motor.
