@@ -158,6 +158,53 @@ void prenderApagarMotor()
   }
 }
 ~~~
+
+
+## Parte 4
+![Parte4](circuito/circuitoparte4.png)
+
+## :robot: Link al proyecto
+- [Parte 4](https://www.tinkercad.com/things/2epVjWcehOI)
+
+## Consigna
+-Si tu número de documento termina en (0-3) deberás implementar a tu proyecto que el interruptor deslizante de la parte dos tenga la función de encender y apagar el sistema, solo mostrando los números primos.
+
+## Función principal
+Lee el interruptor, si esta encendido muestra los numeros normalmente. Si esta en ON calcula si el numero del contador es primo, si es así lo muestra.
+Si esta en OFF apaga el motor, deja el contador en 0 y no funciona el sistema.
+
+
+~~~ C (lenguaje en el que esta escrito)
+void mostrarDependiendoSwitch()
+{
+  estadoInterruptor = digitalRead(INTERRUPTOR);
+  
+  if (estadoInterruptor)
+  {
+    int divisores = 0;
+    
+    for (int i = 1; i <= contador; i++)
+    {
+      if (contador % i == 0)
+      {
+		divisores++;
+      }
+    }
+    
+    if (divisores == 2)
+    {
+      secuenciaDisplays();
+    }
+  }
+  else
+  {
+    digitalWrite(MOTOR_POS, LOW);
+    digitalWrite(MOTOR_NEG, LOW);
+    contador = 0;
+  }
+}
+~~~
+
 ### MOTOR DE AFICIONADO
 
 #### Definición
